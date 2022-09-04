@@ -73,9 +73,6 @@ const SearchFrom = () => {
       }
 
 			searchTerm.length > 0 ? callSearch() : '';
-yield
-			
-			
 
 			
 
