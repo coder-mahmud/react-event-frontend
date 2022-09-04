@@ -24,7 +24,7 @@ export default function SearchPage({events}) {
 
 
 
-// Normal Query
+// Normal Query with direct url
 // export async function getServerSideProps(){
 //   const res= await fetch(`${API_URL}/api/events?filters[$or][0][name][$contains]=throwback&filters[$or][1][description][$contains]=looking&populate=%2A`)
 //   const events = await res.json()

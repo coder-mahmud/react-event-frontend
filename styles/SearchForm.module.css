@@ -1,3 +1,15 @@
 .search_input{
     padding:15px;
 }
+
+.form{
+    position: relative;
+}
+
+.suggestion_holder{
+    position: absolute;
+    top:100%;
+    z-index: 999;
+    background: rgb(165, 165, 165);
+    width:500px;
+}
