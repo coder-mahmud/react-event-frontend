@@ -1,24 +1,27 @@
-//import { parseCookies } from '@/helpers/index'
+
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import Layout from '../../components/Layout'
-import { API_URL } from '../../config/index'
-import styles from '../../styles/AddForm.module.css'
+import Layout from '../../../components/Layout'
+import { API_URL } from '../../../config/index'
+import styles from '../../../styles/AddForm.module.css'
+import moment from 'moment'
 
 
 
-export default function AddEventPage({  }) {
+export default function EditEventPage({ event }) {
+  console.log(event);
+  
   const [values, setValues] = useState({
-    Name: '',
-    Performers: '',
-    Venue: '',
-    Address: '',
-    Date: '',
-    Time: '',
-    Description: '',
+    Name: event.data.attributes.Name,
+    Performers: event.data.attributes.Performers,
+    Venue: event.data.attributes.Venue,
+    Address: event.data.attributes.Address,
+    Date: event.data.attributes.Date,
+    Time: event.data.attributes.Time,
+    Description: event.data.attributes.Description,
   })
 
   const router = useRouter()
@@ -37,8 +40,8 @@ export default function AddEventPage({  }) {
     //   toast.error('Please fill in all fields')
     // }
 
-    const res = await fetch(`${API_URL}/api/events`, {
-      method: 'POST',
+    const res = await fetch(`${API_URL}/api/events/${event.data.id}`, {
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         // Authorization: `Bearer ${token}`,
@@ -70,9 +73,9 @@ export default function AddEventPage({  }) {
   }
 
   return (
-    <Layout title='Add New Event'>
+    <Layout title='Edit Event'>
       <Link href='/events'>Go Back</Link>
-      <h1>Add Event</h1>
+      <h1>Edit Event</h1>
       <ToastContainer />
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.grid}>
@@ -122,7 +125,7 @@ export default function AddEventPage({  }) {
               type='date'
               name='Date'
               id='Date'
-              value={values.Date}
+              value={moment(values.Date).format('yyyy-MM-DD')}
               onChange={handleInputChange}
             />
           </div>
@@ -149,18 +152,23 @@ export default function AddEventPage({  }) {
           ></textarea>
         </div>
 
-        <input type='submit' value='Add Event' className='btn' />
+        <input type='submit' value='Edit Event' className='btn' />
       </form>
     </Layout>
   )
 }
 
-// export async function getServerSideProps({ req }) {
-//   const { token } = parseCookies(req)
+export async function getServerSideProps({params:{id}}) {
 
-//   return {
-//     props: {
-//       token,
-//     },
-//   }
-// }
+    //console.log("From server:", id);
+    const eventData = await fetch (`${API_URL}/api/events/${id}?populate=*`);
+    const  event = await eventData.json();
+    console.log(event);
+    
+
+  return {
+    props: {
+      event
+    },
+  }
+}

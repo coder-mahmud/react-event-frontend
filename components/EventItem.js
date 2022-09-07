@@ -7,14 +7,20 @@ import { API_URL } from '../config'
 import styles from '../styles/EventItem.module.css'
 
 const EventItem = ({event}) => {
-    const eventImage = event.attributes.Image.data.attributes.formats.thumbnail.url
+    let eventImage;
+    if(event.attributes.Image){
+        //eventImage = event.attributes.Image.data.attributes.formats.thumbnail.url
+    }else{
+        eventImage = '';
+    }
+    
     //console.log("Event: ", event);
     //console.log("Event Image: ", eventImage);
     
   return (
     <div className={styles.event}>
         <div className={styles.img}>
-            <Image src={eventImage ? `${API_URL}${eventImage}` : '/images/event-default.png' } width={170} height={100}  />
+            {/* <Image src={eventImage !=='' ? `${API_URL}${eventImage}` : '/images/event-default.png' } width={170} height={100}  /> */}
         </div>
 
         <div className={styles.info}>

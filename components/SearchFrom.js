@@ -26,9 +26,13 @@ const SearchFrom = () => {
 
     }
 
+		
     const searchInputChanged = (e)=>{
 			//console.log(e.target.value);
+			// console.log("Event fired!");
+			
 			setEvents([]);
+
 			const searchTerm = e.target.value;
 
 			const callSearch = async() => {
@@ -67,13 +71,34 @@ const SearchFrom = () => {
 				const res= await fetch(`${API_URL}/api/events?${qsQuery}&populate=%2A`)
 				const events = await res.json();
 				console.log("from input change ", events);
-				setEvents(events);
+				if(searchTerm !==''){
+					setEvents(events);
+				}else{
+					setEvents([]);
+				}
+				
 
 
-      }
+      }// Emd callSearch
 
-			searchTerm.length > 0 ? callSearch() : '';
+			
+			console.log('Search Term:', searchTerm);
+			
+			
+			// callSearchTimeOut = setTimeout(()=>{
+			// 	//searchTerm ==='' ? '':  callSearch() ;
+			// 	if(searchTerm !==''){
+			// 		callSearch()
+			// 	}
 
+			// },2000)
+			
+			callSearch()
+			// callSearchTimeOut = setTimeout(()=>{
+					
+			// },2000)
+
+			// console.log('callSearchTimeOut',callSearchTimeOut);
 			
 
     }

@@ -6,27 +6,56 @@ import styles from '../../styles/Event.module.css'
 import Link from 'next/link';
 import Image from 'next/image';
 import {FaPencilAlt, FaTimes } from 'react-icons/fa'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
+
+
+
 
 const EventPage = ({event}) => {
+
     const router = useRouter();
     console.log('From event component:',event);
-    const deleteEvent =() =>{
+    const eventId = event.data.id;
+    console.log(eventId);
+    
+    
+    const deleteEvent = async () =>{
       console.log('Delete');
+      if(confirm("Are you sure to delete this? ")){
+        const res = await fetch(`${API_URL}/api/events/${eventId}`,{
+          method: 'DELETE',
+        });
+
+        if (!res.ok){
+
+        }else{
+  
+          const evt = await res.json()
+          console.log("Deleted Event: ", evt);
+          router.push(`/events/`)
+        }
+      }// End confirm
       
-    }
+
+      
+      
+    }// End deleteEvent
     //console.log("Image Url:", event.data.attributes.Image.data.attributes.formats.medium.url);
     
   
-    const imgSrc = `http://localhost:1337${event.data.attributes.Image.data.attributes.formats.large.url}`
-    console.log("Image Url:", imgSrc);
+    // const imgSrc = `http://localhost:1337${event.data.attributes.Image.data.attributes.formats.large.url}`
+    // console.log("Image Url:", imgSrc);
     
   return (
     <Layout>
       <h1>{event.data.attributes.Name}</h1>
+      <ToastContainer />
         
         <div className={styles.event}>
           <div className={styles.controls}>
-            <Link href={`/events/edit/${event.id}`}>
+            <Link href={`/events/edit/${event.data.id}`}>
               <a><FaPencilAlt />Edit Event</a>
             </Link>
             <a href="#" className={styles.delete} onClick={deleteEvent}><FaTimes /> Delete Event</a>
@@ -40,8 +69,7 @@ const EventPage = ({event}) => {
           {event.data.attributes.Image && (
             
             <div className={styles.image}>
-              {/* <Image src={`http://localhost:1337/$`} width={960} height={600} /> */}
-              <Image src= {imgSrc} width={960} height={600} />
+              {/* <Image src= {imgSrc} width={960} height={600} /> */}
             </div>
           )}
 
