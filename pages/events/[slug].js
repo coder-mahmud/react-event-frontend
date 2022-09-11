@@ -43,9 +43,11 @@ const EventPage = ({event}) => {
       
     }// End deleteEvent
     //console.log("Image Url:", event.data.attributes.Image.data.attributes.formats.medium.url);
-    
+  let imgSrc;
+  if(event.data.attributes.Image.data){
+    imgSrc = `http://localhost:1337${event.data.attributes.Image.data.attributes.formats.medium.url}`
+  }
   
-    // const imgSrc = `http://localhost:1337${event.data.attributes.Image.data.attributes.formats.large.url}`
     // console.log("Image Url:", imgSrc);
     
   return (
@@ -69,7 +71,7 @@ const EventPage = ({event}) => {
           {event.data.attributes.Image && (
             
             <div className={styles.image}>
-              {/* <Image src= {imgSrc} width={960} height={600} /> */}
+              {event.data.attributes.Image.data && <Image src= {imgSrc} width={960} height={600} />}
             </div>
           )}
 

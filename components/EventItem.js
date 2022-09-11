@@ -8,8 +8,8 @@ import styles from '../styles/EventItem.module.css'
 
 const EventItem = ({event}) => {
     let eventImage;
-    if(event.attributes.Image){
-        //eventImage = event.attributes.Image.data.attributes.formats.thumbnail.url
+    if(event.attributes.Image.data){
+        eventImage = event.attributes.Image.data.attributes.formats.thumbnail.url
     }else{
         eventImage = '';
     }
@@ -20,7 +20,7 @@ const EventItem = ({event}) => {
   return (
     <div className={styles.event}>
         <div className={styles.img}>
-            {/* <Image src={eventImage !=='' ? `${API_URL}${eventImage}` : '/images/event-default.png' } width={170} height={100}  /> */}
+            <Image src={eventImage !=='' ? `${API_URL}${eventImage}` : '/images/event-default.png' } width={170} height={100}  />
         </div>
 
         <div className={styles.info}>

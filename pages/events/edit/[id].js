@@ -8,11 +8,16 @@ import Layout from '../../../components/Layout'
 import { API_URL } from '../../../config/index'
 import styles from '../../../styles/AddForm.module.css'
 import moment from 'moment'
-
+import Image from 'next/image'
+import {FaImage} from 'react-icons/fa'
+import Modal from '../../../components/Modal'
+import ImageUpload from '../../../components/ImageUpload'
 
 
 export default function EditEventPage({ event }) {
-  console.log(event);
+  console.log("From component:", event);
+  console.log("Component Ran!");
+  
   
   const [values, setValues] = useState({
     Name: event.data.attributes.Name,
@@ -24,11 +29,24 @@ export default function EditEventPage({ event }) {
     Description: event.data.attributes.Description,
   })
 
+  let imageUrl = event.data.attributes.Image.data ? event.data.attributes.Image.data.attributes.formats.thumbnail.url : null
+  //console.log("Image", imageUrl);
+  
+  let eventImageId = event.data.attributes.Image.data ? event.data.attributes.Image.data.id : null
+  console.log("Image ID:", eventImageId);
+  
+  const [imagePreview, setImagePreview] = useState(imageUrl)
+
+  const [showModal, setShowModal ] = useState(false)
+
+  const [imageId, setImageId] = useState(eventImageId);
+
+
   const router = useRouter()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log(values);
+    //console.log(values);
     // console.log(API_URL);
 
     // Validation
@@ -60,7 +78,7 @@ export default function EditEventPage({ event }) {
       toast.error('Something Went Wrong')
     } else {
       const evt = await res.json()
-      console.log(evt);
+      console.log("From handle submit:", evt);
       
       router.push(`/events/${evt.data.attributes.Slug}`)
     }
@@ -71,6 +89,37 @@ export default function EditEventPage({ event }) {
     //console.log(name, value)
     setValues({ ...values, [name]: value })
   }
+
+  const imageUploaded = async ()=>{
+    //console.log("Uploaded");
+    const newRes = await fetch(`${API_URL}/api/events/${event.data.id}?populate=*`)
+    const newEvent = await newRes.json();
+    console.log("From imageUploaded Event:", newEvent);
+    const eventImage = `${newEvent.data.attributes.Image.data.attributes.formats.thumbnail.url}`;
+
+    console.log("From image Uploaded imagePreview:", eventImage);
+    setImagePreview(eventImage)
+    
+    setShowModal(false)
+    //console.log("ImagePreview form imageUploaded:", imagePreview);
+    
+    
+  }
+
+  const deleteImage = async () =>{
+    if(confirm("Are you sure to delete this image?")){
+        const res = await fetch(`${API_URL}/api/upload/files/${imageId}`,{
+          method:'DELETE'
+        });
+        console.log(res);
+        setImagePreview(null)
+
+        return setImageId(null)
+
+      }
+  }
+
+
 
   return (
     <Layout title='Edit Event'>
@@ -154,6 +203,25 @@ export default function EditEventPage({ event }) {
 
         <input type='submit' value='Edit Event' className='btn' />
       </form>
+
+      <h2>Event Image</h2>
+      {imagePreview ? (
+        <Image src={`${API_URL}${imagePreview}`} height={100} width={170} />
+      ) :
+        <p>No Image for this event!</p>
+      }
+
+      <div>
+        { !imagePreview && (<button className="btn-secondary" onClick={()=> setShowModal(true)}><FaImage />  Add Image</button>)}
+        { imagePreview && (<button className="btn-secondary" onClick={deleteImage}><FaImage />  Delete Image</button>)}
+      </div>
+
+
+      <Modal show={showModal} onClose={()=> setShowModal(false)} ><ImageUpload evtId={event.id} imageUploaded={imageUploaded}/> </Modal>
+
+
+
+
     </Layout>
   )
 }
@@ -163,7 +231,7 @@ export async function getServerSideProps({params:{id}}) {
     //console.log("From server:", id);
     const eventData = await fetch (`${API_URL}/api/events/${id}?populate=*`);
     const  event = await eventData.json();
-    console.log(event);
+    console.log("From server:", event);
     
 
   return {
